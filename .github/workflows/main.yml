@@ -1,0 +1,30 @@
+name: Build Mihon Extension
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download Tachiyomi Extension Template
+        run: git clone https://github.com/tachiyomiorg/tachiyomi-extensions.git
+
+      - name: Move Extension
+        run: |
+          mkdir -p tachiyomi-extensions/src/tr/tortuga
+          cp Tortuga.kt tachiyomi-extensions/src/tr/tortuga/
+
+      - name: Build APK
+        run: |
+          cd tachiyomi-extensions
+          ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: tortuga-apk
+          path: tachiyomi-extensions/apk/*.apk
